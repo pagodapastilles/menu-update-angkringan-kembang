@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informasi Menu - Angkringan Kembang</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <img id="logo" src="" alt="Logo" style="display: none; max-height: 50px; margin-right: 10px;">
+            <h1 id="restaurant-name">Angkringan Kembang</h1>
+            <h2>Informasi Menu</h2>
+        </div>
+        <div class="header-right">
+            <p id="operational-hours">Jam Operasional: 10:00 - 22:00</p>
+        </div>
+        <button id="settings-btn" onclick="toggleSettings()">⚙️ Pengaturan</button>
+    </header>
+
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleSettings()">&times;</span>
+            <h2>Pengaturan Web</h2>
+            <form id="settings-form">
+                <label for="logo-upload">Upload Logo:</label>
+                <input type="file" id="logo-upload" accept="image/*"><br><br>
+
+                <label for="csv-url">Link Google Sheet (CSV Publish):</label>
+                <input type="text" id="csv-url" placeholder="https://docs.google.com/spreadsheets/d/.../pub?output=csv"><br><br>
+
+                <label for="video-id">Link Video YouTube (ID atau URL):</label>
+                <input type="text" id="video-id" placeholder="dQw4w9WgXcQ atau https://www.youtube.com/watch?v=..."><br><br>
+
+                <label for="update-interval">Interval Update (detik):</label>
+                <input type="number" id="update-interval" min="5" placeholder="5"><br><br>
+
+                <label for="restaurant-name-input">Nama Restoran:</label>
+                <input type="text" id="restaurant-name-input" placeholder="Angkringan Kembang"><br><br>
+
+                <label for="operational-hours-input">Jam Operasional:</label>
+                <input type="text" id="operational-hours-input" placeholder="10:00 - 22:00"><br><br>
+
+                <label for="reservation-info">Informasi Pemesanan:</label>
+                <input type="text" id="reservation-info" placeholder="088216562558"><br><br>
+
+                <label for="copyright-year">Tahun Copyright:</label>
+                <input type="text" id="copyright-year" placeholder="2025"><br><br>
+
+                <button type="button" onclick="saveSettings()">Simpan Pengaturan</button>
+            </form>
+            <div id="log-container">
+                <h3>Log Aplikasi</h3>
+                <ul id="log-list"></ul>
+                <button onclick="clearLogs()">Hapus Log</button>
+            </div>
+        </div>
+    </div>
+
+    <main class="content">
+        <div class="column left">
+            <h3>Menu Update</h3>
+            <ul id="menu-update-list"></ul>
+        </div>
+        <div class="column right">
+            <h3>Menu Habis</h3>
+            <ul id="menu-habis-list"></ul>
+        </div>
+    </main>
+
+    <div class="video-container">
+        <iframe id="youtube-video" width="560" height="315" src="https://www.youtube.com/embed/VIDEO_ID_HERE?autoplay=1&mute=1&loop=1&playlist=VIDEO_ID_HERE" title="Video Promosi" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-left">
+            <p id="reservation-text">Informasi pemesanan dan reservasi: 088216562558</p>
+        </div>
+        <div class="footer-right">
+            <p id="copyright-text">&copy; Angkringan Kembang 2025</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
