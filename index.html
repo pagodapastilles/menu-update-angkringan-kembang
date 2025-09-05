@@ -11,13 +11,15 @@
     <header class="header">
         <div class="header-left">
             <img id="logo" src="" alt="Logo" style="display: none; max-height: 50px; margin-right: 10px;">
-            <h1 id="restaurant-name">Angkringan Kembang</h1>
-            <h2>Informasi Menu</h2>
+            <div class="header-text">
+                <h1 id="restaurant-name">Angkringan Kembang</h1>
+                <h2>Informasi Menu</h2>
+            </div>
         </div>
         <div class="header-right">
             <p id="operational-hours">Jam Operasional: 10:00 - 22:00</p>
+            <button id="settings-btn" onclick="toggleSettings()">⚙️</button>
         </div>
-        <button id="settings-btn" onclick="toggleSettings()">⚙️ Pengaturan</button>
     </header>
 
     <div id="settings-modal" class="modal">
@@ -78,7 +80,7 @@
             <p id="reservation-text">Informasi pemesanan dan reservasi: 088216562558</p>
         </div>
         <div class="footer-right">
-            <p id="copyright-text">&copy; Angkringan Kembang 2025</p>
+            <p id="copyright-text">Copyright © 2025 Angkringan Kembang. All rights reserved.</p>
         </div>
     </footer>
 
