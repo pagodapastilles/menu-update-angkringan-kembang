@@ -10,7 +10,7 @@ body {
 }
 
 .header {
-    background-color: #4CAF50;
+    background-color: #184A10; /* Hijau tua */
     color: white;
     padding: 20px;
     display: flex;
@@ -29,6 +29,11 @@ body {
     margin-right: 10px;
 }
 
+.header-text {
+    display: flex;
+    flex-direction: column;
+}
+
 .header-left h1 {
     margin: 0;
     font-size: 2em;
@@ -39,15 +44,18 @@ body {
     font-size: 1.2em;
 }
 
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
 .header-right p {
     margin: 0;
     font-size: 1em;
 }
 
 #settings-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
     background: transparent;
     border: none;
     color: white;
@@ -140,7 +148,7 @@ form input[readonly] {
 }
 
 .column h3 {
-    color: #4CAF50;
+    color: #184A10; /* Sesuaikan dengan header */
     margin-top: 0;
 }
 
@@ -179,9 +187,9 @@ form input[readonly] {
     bottom: 60px;
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* Rata kiri */
     background-color: #f4f4f4;
-    padding: 10px 0;
+    padding: 10px 20px;
     z-index: 10;
 }
 
