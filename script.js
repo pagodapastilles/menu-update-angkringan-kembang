@@ -51,7 +51,7 @@ function applySettings(settings) {
 }
 
 function loadSettings() {
-    const settingsCsvUrl = 'YOUR_SETTINGS_CSV_URL_HERE'; // Ganti dengan URL CSV tab Settings
+    const settingsCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRc2qSf5-tgtSF8VZgfr6znHeEcsqeta0xteGANAlj2A7l52A2SxLFCPFvsgJ_wvczw0f-n07LpLyqG/pub?output=csv';
     fetch(settingsCsvUrl)
         .then(response => response.text())
         .then(csvText => {
@@ -65,7 +65,7 @@ function loadSettings() {
                         }
                     });
                     applySettings(settings);
-                    logMessage('Pengaturan dimuat dari Google Sheets.');
+                    logMessage('Pengaturan dimuat dari Google Sheets pada ' + new Date().toLocaleString('id-ID'));
                 },
                 error: (error) => {
                     console.error('Error parsing settings CSV:', error);
@@ -96,7 +96,7 @@ function extractVideoId(url) {
 }
 
 function fetchMenuData() {
-    const csvUrl = localStorage.getItem('csv_url') || 'YOUR_CSV_URL_HERE';
+    const csvUrl = localStorage.getItem('csv_url') || 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQySDE23UuFQwD_I-grYtKhPWqEGzl85Wliog5R5p_NBk-xvqYPkxIpoPAerfRTQ-UBOS-aeFMbUYB8/pub?output=csv';
     fetch(csvUrl)
         .then(response => response.text())
         .then(csvText => {
@@ -136,7 +136,7 @@ function fetchMenuData() {
                             updateList.appendChild(li);
                         }
                     });
-                    logMessage('Data menu berhasil diupdate.');
+                    logMessage('Data menu berhasil diupdate pada ' + new Date().toLocaleString('id-ID'));
                 },
                 error: (error) => {
                     console.error('Error parsing CSV:', error);
@@ -171,5 +171,5 @@ function loadLogs() {
 function clearLogs() {
     localStorage.removeItem('logs');
     loadLogs();
-    logMessage('Log dihapus.');
+    logMessage('Log dihapus pada ' + new Date().toLocaleString('id-ID'));
 }
