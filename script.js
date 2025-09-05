@@ -1,4 +1,5 @@
 let intervalId;
+let currentSettingsHash = ''; // Untuk cek perubahan pengaturan
 
 document.addEventListener('DOMContentLoaded', () => {
     loadSettings();
@@ -25,16 +26,28 @@ function loadSettingsToForm() {
 }
 
 function applySettings(settings) {
+    // Hash untuk cek perubahan
+    const newHash = JSON.stringify(settings);
+    if (newHash === currentSettingsHash) return; // Skip jika tidak ada perubahan
+    currentSettingsHash = newHash;
+
+    // Simpan ke LocalStorage
     Object.keys(settings).forEach(key => localStorage.setItem(key, settings[key]));
+
+    // Terapkan ke UI (kecuali menu list)
     document.getElementById('logo').src = settings.logo_url || '';
     document.getElementById('logo').style.display = settings.logo_url ? 'inline' : 'none';
     document.getElementById('restaurant-name').textContent = settings.restaurant_name || 'Angkringan Kembang';
     document.getElementById('operational-hours').textContent = `Jam Operasional: ${settings.operational_hours || '10:00 - 22:00'}`;
     document.getElementById('reservation-text').textContent = `Informasi pemesanan dan reservasi: ${settings.reservation_info || '088216562558'}`;
-    document.getElementById('copyright-text').textContent = `&copy; ${settings.restaurant_name || 'Angkringan Kembang'} ${settings.copyright_year || '2025'}`;
+    document.getElementById('copyright-text').textContent = `Copyright © ${settings.copyright_year || '2025'} ${settings.restaurant_name || 'Angkringan Kembang'}. All rights reserved.`;
 
+    // Update video hanya jika belum diatur
     const videoId = extractVideoId(settings.video_url) || 'VIDEO_ID_HERE';
-    document.getElementById('youtube-video').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
+    const currentSrc = document.getElementById('youtube-video').src;
+    if (!currentSrc.includes(videoId)) {
+        document.getElementById('youtube-video').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
+    }
 }
 
 function loadSettings() {
