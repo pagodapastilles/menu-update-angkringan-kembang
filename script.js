@@ -1,99 +1,89 @@
-let intervalId;  // Untuk menyimpan ID interval polling
+let intervalId;
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadSettings();  // Muat pengaturan dari LocalStorage
-    fetchMenuData();  // Fetch pertama kali
-    startPolling();  // Mulai polling berdasarkan interval
-    loadLogs();  // Muat log dari LocalStorage
+    loadSettings();
+    fetchMenuData();
+    startPolling();
+    loadLogs();
 });
 
 function toggleSettings() {
     const modal = document.getElementById('settings-modal');
     modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+    loadSettingsToForm();
 }
 
-function saveSettings() {
-    const settings = {
-        logo: document.getElementById('logo-upload').files[0] ? getBase64(document.getElementById('logo-upload').files[0]) : localStorage.getItem('logo'),
-        csvUrl: document.getElementById('csv-url').value || localStorage.getItem('csvUrl') || 'YOUR_CSV_URL_HERE',
-        videoId: extractVideoId(document.getElementById('video-id').value) || localStorage.getItem('videoId') || 'VIDEO_ID_HERE',
-        updateInterval: parseInt(document.getElementById('update-interval').value) * 1000 || parseInt(localStorage.getItem('updateInterval')) || 5000,
-        restaurantName: document.getElementById('restaurant-name-input').value || localStorage.getItem('restaurantName') || 'Angkringan Kembang',
-        operationalHours: document.getElementById('operational-hours-input').value || localStorage.getItem('operationalHours') || '10:00 - 22:00',
-        reservationInfo: document.getElementById('reservation-info').value || localStorage.getItem('reservationInfo') || '088216562558',
-        copyrightYear: document.getElementById('copyright-year').value || localStorage.getItem('copyrightYear') || '2025'
-    };
-
-    // Simpan ke LocalStorage (promise karena base64 async)
-    if (typeof settings.logo === 'function') {
-        settings.logo.then(base64 => {
-            localStorage.setItem('logo', base64);
-            applySettings(settings);
-        });
-    } else {
-        applySettings(settings);
-    }
-
-    toggleSettings();
-    logMessage('Pengaturan disimpan.');
+function loadSettingsToForm() {
+    document.getElementById('logo-url').value = localStorage.getItem('logo_url') || '';
+    document.getElementById('csv-url').value = localStorage.getItem('csv_url') || '';
+    document.getElementById('video-url').value = localStorage.getItem('video_url') || '';
+    document.getElementById('update-interval').value = (parseInt(localStorage.getItem('update_interval')) / 1000) || '';
+    document.getElementById('restaurant-name-input').value = localStorage.getItem('restaurant_name') || '';
+    document.getElementById('operational-hours-input').value = localStorage.getItem('operational_hours') || '';
+    document.getElementById('reservation-info').value = localStorage.getItem('reservation_info') || '';
+    document.getElementById('copyright-year').value = localStorage.getItem('copyright_year') || '';
 }
 
 function applySettings(settings) {
     Object.keys(settings).forEach(key => localStorage.setItem(key, settings[key]));
+    document.getElementById('logo').src = settings.logo_url || '';
+    document.getElementById('logo').style.display = settings.logo_url ? 'inline' : 'none';
+    document.getElementById('restaurant-name').textContent = settings.restaurant_name || 'Angkringan Kembang';
+    document.getElementById('operational-hours').textContent = `Jam Operasional: ${settings.operational_hours || '10:00 - 22:00'}`;
+    document.getElementById('reservation-text').textContent = `Informasi pemesanan dan reservasi: ${settings.reservation_info || '088216562558'}`;
+    document.getElementById('copyright-text').textContent = `&copy; ${settings.restaurant_name || 'Angkringan Kembang'} ${settings.copyright_year || '2025'}`;
 
-    // Terapkan ke UI
-    document.getElementById('logo').src = localStorage.getItem('logo') || '';
-    document.getElementById('logo').style.display = localStorage.getItem('logo') ? 'inline' : 'none';
-    document.getElementById('restaurant-name').textContent = settings.restaurantName;
-    document.getElementById('operational-hours').textContent = `Jam Operasional: ${settings.operationalHours}`;
-    document.getElementById('reservation-text').textContent = `Informasi pemesanan dan reservasi: ${settings.reservationInfo}`;
-    document.getElementById('copyright-text').textContent = `&copy; ${settings.restaurantName} ${settings.copyrightYear}`;
-
-    // Update video
-    const videoId = settings.videoId;
+    const videoId = extractVideoId(settings.video_url) || 'VIDEO_ID_HERE';
     document.getElementById('youtube-video').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
-
-    // Restart polling dengan interval baru
-    clearInterval(intervalId);
-    startPolling();
 }
 
 function loadSettings() {
-    const settings = {
-        logo: localStorage.getItem('logo'),
-        csvUrl: localStorage.getItem('csvUrl') || 'YOUR_CSV_URL_HERE',
-        videoId: localStorage.getItem('videoId') || 'VIDEO_ID_HERE',
-        updateInterval: parseInt(localStorage.getItem('updateInterval')) || 5000,
-        restaurantName: localStorage.getItem('restaurantName') || 'Angkringan Kembang',
-        operationalHours: localStorage.getItem('operationalHours') || '10:00 - 22:00',
-        reservationInfo: localStorage.getItem('reservationInfo') || '088216562558',
-        copyrightYear: localStorage.getItem('copyrightYear') || '2025'
-    };
-    applySettings(settings);
+    const settingsCsvUrl = 'YOUR_SETTINGS_CSV_URL_HERE'; // Ganti dengan URL CSV tab Settings
+    fetch(settingsCsvUrl)
+        .then(response => response.text())
+        .then(csvText => {
+            Papa.parse(csvText, {
+                header: true,
+                complete: (results) => {
+                    const settings = {};
+                    results.data.forEach(item => {
+                        if (item.Key && item.Value) {
+                            settings[item.Key] = item.Value;
+                        }
+                    });
+                    applySettings(settings);
+                    logMessage('Pengaturan dimuat dari Google Sheets.');
+                },
+                error: (error) => {
+                    console.error('Error parsing settings CSV:', error);
+                    logMessage('Error parsing settings CSV: ' + error.message);
+                    applySettings({});
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching settings CSV:', error);
+            logMessage('Error fetching settings CSV: ' + error.message);
+            applySettings({});
+        });
 }
 
 function startPolling() {
-    const interval = parseInt(localStorage.getItem('updateInterval')) || 5000;
-    intervalId = setInterval(fetchMenuData, interval);
-}
-
-function getBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
+    const interval = parseInt(localStorage.getItem('update_interval')) || 5000;
+    intervalId = setInterval(() => {
+        fetchMenuData();
+        loadSettings();
+    }, interval);
 }
 
 function extractVideoId(url) {
     if (!url) return '';
     const match = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
-    return match ? match[1] : url;  // Jika sudah ID, return langsung
+    return match ? match[1] : '';
 }
 
 function fetchMenuData() {
-    const csvUrl = localStorage.getItem('csvUrl') || 'YOUR_CSV_URL_HERE';
+    const csvUrl = localStorage.getItem('csv_url') || 'YOUR_CSV_URL_HERE';
     fetch(csvUrl)
         .then(response => response.text())
         .then(csvText => {
